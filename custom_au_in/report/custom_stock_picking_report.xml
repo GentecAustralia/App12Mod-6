@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_custom_picking_order" name="custom_picking_report">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <t t-foreach="docs" t-as="doc" t-value="doc.with_context({'lang':doc.partner_id.lang})">
+                    <t t-if="doc.sale_id.name == doc.origin"> 
+                        <div class="page">
+                            <h2>
+                                <span t-field="doc.name"/>
+                            </h2>
+                            <table style="border-width:1px 0; border-style:solid; margin-bottom:80px;" width="100%">
+                            <thead>
+                                <tr style="background-color:#D3D3D3;" width="100%">
+                                    <th width="25%" style="padding-left:10px;"><strong>Part Id</strong></th>
+                                    <th width="25%"><strong>Description</strong></th>
+                                    <th width="15%"><strong>On Hand</strong></th>
+                                    <th width="15%"><strong>Orderd</strong></th>
+                                    <th width="10%"><strong>Unit</strong></th>
+                                    <th width="10%" style="padding-right:10px;"><strong>Committed</strong></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                    <tr t-foreach="doc.sale_id.order_line" t-as="sale_lines">
+                                        <t t-if="sale_lines.product_id.product_tmpl_id.bom_ids">
+                                            <td style="padding-left:10px;">
+                                                <strong><t t-esc="sale_lines.product_id.name"/></strong>
+                                            </td>
+                                            <td>
+                                                <strong><t t-esc="sale_lines.name"/></strong>
+                                            </td>
+                                            <td></td>
+                                            <td style="padding-left:10px;">
+                                                <strong><t t-esc="sale_lines.product_uom_qty"/></strong>
+                                            </td>
+                                            <td>
+                                                <strong><t t-esc="sale_lines.product_id.uom_id.name"/></strong>
+                                            </td>
+                                            <td style="padding-left:10px;">
+                                                <strong><t t-esc="sale_lines.product_id.qty_available"/></strong>
+                                            </td>
+                                             <t t-foreach="sale_lines.product_id.product_tmpl_id.bom_ids.bom_line_ids" t-as="bom_line">
+                                            <tr t-foreach="doc.move_lines" t-as="move_line">
+                                                <t t-if="bom_line.product_id.id ==  move_line.product_id.id"> 
+                                                    <td style="padding-left:10px;">
+                                                        <t t-esc="move_line.product_id.name"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="move_line.product_id.name"/>
+                                                    </td>
+                                                    <td style="padding-left:10px;">
+                                                        <t t-esc="move_line.product_id.qty_available"/>
+                                                    </td>
+                                                    <td style="padding-left:10px;">
+                                                        <t t-esc="move_line.product_uom_qty"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="move_line.product_id.uom_id.name"/>
+                                                    </td>
+                                                    <td style="padding-left:10px;">
+                                                        <t t-esc="move_line.reserved_availability"/>
+                                                    </td>
+                                                </t>
+                                            </tr>
+                                        </t>
+                                    </t>
+                                </tr>
+                                <tr t-foreach="doc.sale_id.order_line" t-as="sale_lines">
+                                        <t t-if="not sale_lines.product_id.product_tmpl_id.bom_ids">
+                                            <tr t-foreach="doc.move_lines" t-as="move_line">
+                                                <t t-if="sale_lines.product_id.id ==  move_line.product_id.id"> 
+                                                   <td style="padding-left:10px;">
+                                                        <t t-esc="move_line.product_id.name"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="move_line.product_id.name"/>
+                                                    </td>
+                                                    <td style="padding-left:10px;">
+                                                        <t t-esc="move_line.product_id.qty_available"/>
+                                                    </td>
+                                                    <td style="padding-left:10px;">
+                                                        <t t-esc="move_line.product_uom_qty"/>
+                                                    </td>
+                                                    <td>
+                                                        <t t-esc="move_line.product_id.uom_id.name"/>
+                                                    </td>
+                                                    <td style="padding-left:10px;">
+                                                        <t t-esc="move_line.reserved_availability"/>
+                                                    </td>
+                                                </t>
+                                            </tr>
+                                        </t>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+                            <table style="margin-bottom:30px;" width="50%">
+                             <tr>
+                                <td width="30%">
+                                    <strong>Customer Message</strong>
+                                </td>
+                                <td width="20%"><t t-esc="doc.sale_id.note"/></td>
+                            </tr>
+                        </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </t>
+</template>
+</odoo>
